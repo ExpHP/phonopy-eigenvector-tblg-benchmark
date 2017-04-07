@@ -1,0 +1,38 @@
+#!/bin/bash
+
+die() { echo >&2 "$@"; exit 1; }
+
+HDF5=
+TEMP=`getopt -o '' --long hdf5 -- "$@"` || exit 1
+if [ $? != 0 ] ; then die "Terminating..."; fi
+eval set -- "$TEMP"
+while true ; do
+    case "$1" in
+        --hdf5) HDF5=--hdf5; shift;;
+        --) shift; break;;
+        *) echo "Internal error (argument): '$1'"; exit 1;;
+    esac
+done
+
+if [ x == x"$1" ]; then
+    die "usage: $(basename "$0") [--hdf5] OUTPREFIX"
+fi
+PREFIX=$1
+
+ln -sf input/* .
+
+if [ "" != "$HDF5" ]; then
+	target=force_constants.hdf5
+else
+	target=FORCE_CONSTANTS
+fi
+
+if ! [ -e $target ]; then
+	echo >&2 "Making $target"
+	phonopy common.conf --writefc $HDF5 || { rm -f $target; exit 1; }
+	if ! [ -e $target ]; then die "did not make ${target}!"; fi
+fi
+
+for k in 2 3; do
+	python$k -m cProfile --sort=cumtime $(which phonopy) --readfc $HDF5 --eigenvectors common.conf >${PREFIX}-${k}.prof && mv band.yaml ${PREFIX}-${k}.yaml
+done
