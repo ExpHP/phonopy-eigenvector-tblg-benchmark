@@ -34,5 +34,6 @@ if ! [ -e $target ]; then
 fi
 
 for k in 2 3; do
+	echo >&2 "Benchmarking on python $k..."
 	python$k -m cProfile --sort=cumtime $(which phonopy) --readfc $HDF5 --eigenvectors common.conf >${PREFIX}-${k}.prof && mv band.yaml ${PREFIX}-${k}.yaml
 done

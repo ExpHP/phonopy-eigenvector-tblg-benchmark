@@ -1,0 +1,14 @@
+# since we carelessly dump links all over the curent directory,
+# this is more of a "git whitelist"
+#
+# >_>
+#
+# <_<
+#
+# don't try this at home, kids
+*
+!input/
+!info/
+!bench
+!.gitignore
+!README.md
