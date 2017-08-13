@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# FIXME FIXME
+# FIXME FIXME
+#    A tragedy occurred when trying to push;
+#    (I accidentally set upstream as phonopy)
+#    I've lost all the recent changes to bench that
+#      support the new layout.
+#    Poopie.
+# FIXME FIXME
+
 die() { echo >&2 "$@"; exit 1; }
 
 HDF5=
@@ -34,6 +43,5 @@ if ! [ -e $target ]; then
 fi
 
 for k in 2 3; do
-	echo >&2 "Benchmarking on python $k..."
 	python$k -m cProfile --sort=cumtime $(which phonopy) --readfc $HDF5 --eigenvectors common.conf >${PREFIX}-${k}.prof && mv band.yaml ${PREFIX}-${k}.yaml
 done
